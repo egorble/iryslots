@@ -1,0 +1,9 @@
+{
+  "network": "testnet",
+  "chainId": "1270",
+  "contractAddress": "0xA88ce26B2895a27b26ab92d5F179d99Ac4D75CC1",
+  "deploymentTxHash": "0x3c756bd1a2f8d7362cc9956dd645260157b3f8c30792ae5762a92297866fbe3c",
+  "deployedAt": "2025-08-04T17:29:44.150Z",
+  "deployer": "configured",
+  "serverWallet": "0x4Bf3593aE21739f6c16b8ef67c0C2113d1543BE7"
+}

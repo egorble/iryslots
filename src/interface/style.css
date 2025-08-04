@@ -1,0 +1,292 @@
+/* Awwwards-рівень кольорова палітра */
+:root {
+  --primary-neon: #50ffd6;
+  --primary-white: #ffffff;
+  --primary-black: #0a0a0a;
+  --neon-light: #7ffde1;
+  --neon-dark: #2dd4aa;
+  --gray-100: #f8fafc;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --shadow-neon: 0 0 20px rgba(80, 255, 214, 0.3);
+  --shadow-neon-strong: 0 0 40px rgba(80, 255, 214, 0.6);
+  --gradient-neon: linear-gradient(135deg, #50ffd6 0%, #7ffde1 100%);
+}
+
+.interface {
+  pointer-events: none;
+  z-index: 1;
+  position: absolute;
+  margin: 1em;
+  color: var(--primary-white);
+  font-weight: 600;
+}
+
+#logo-section {
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1;
+  margin: 2rem;
+}
+
+.logo {
+  width: min(280px, 22vw);
+  filter: drop-shadow(var(--shadow-neon));
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.logo:hover {
+  filter: drop-shadow(var(--shadow-neon-strong));
+  transform: scale(1.05);
+}
+
+#version {
+  color: var(--primary-neon);
+  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-size: 0.75rem;
+  font-weight: 500;
+  margin-left: 110px;
+  opacity: 0.7;
+  animation: fadeOut 1s ease 10s forwards;
+}
+
+@keyframes fadeOut {
+  to {
+    opacity: 0;
+    visibility: hidden;
+  }
+}
+
+.win-section {
+  position: fixed;
+  bottom: 2rem;
+  left: 2rem;
+  height: min(72px, 11vw);
+  display: flex;
+  align-items: baseline;
+}
+
+.win-number {
+  font-size: min(72px, 11vw);
+  font-weight: 800;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 10px rgba(80, 255, 214, 0.5));
+  width: 400px;
+  letter-spacing: -0.02em;
+  animation: glow 2s ease-in-out infinite alternate;
+  line-height: 1;
+}
+
+@keyframes glow {
+  from { filter: drop-shadow(0 0 10px rgba(80, 255, 214, 0.5)); }
+  to { filter: drop-shadow(0 0 20px rgba(80, 255, 214, 0.8)); }
+}
+
+.bet-section {
+  position: fixed;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  height: min(72px, 11vw);
+  font-size: min(72px, 11vw);
+  font-weight: 800;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  color: var(--primary-white);
+  filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
+}
+
+.bet-label {
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.bet-amount {
+  width: 120px;
+  white-space: nowrap;
+  text-align: center;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  min-width: 120px;
+  line-height: 1;
+}
+
+#bet-controls {
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  margin-left: 0.5rem;
+  align-items: center;
+  justify-content: center;
+  padding: 4px;
+  min-width: 40px;
+  height: fit-content;
+}
+
+.hidden {
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.bet-control {
+  margin: 0;
+  font-size: 16px;
+  line-height: 1;
+  cursor: pointer;
+  pointer-events: all;
+  color: var(--primary-neon);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: rgba(80, 255, 214, 0.1);
+  border-radius: 6px;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(80, 255, 214, 0.2);
+  min-width: 30px;
+  min-height: 30px;
+  flex-shrink: 0;
+}
+
+.bet-control:hover {
+  background: rgba(80, 255, 214, 0.2);
+  transform: scale(1.05);
+  box-shadow: var(--shadow-neon);
+  border-color: var(--primary-neon);
+}
+
+.coins-section {
+  position: fixed;
+  bottom: 2rem;
+  right: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  background: rgba(15, 23, 42, 0.8);
+  backdrop-filter: blur(20px);
+  border: 1px solid rgba(80, 255, 214, 0.2);
+  border-radius: 20px;
+  padding: 1rem 1.5rem;
+  box-shadow: var(--shadow-neon);
+}
+
+.coins-number {
+  font-size: min(72px, 11vw);
+  font-weight: 800;
+  width: auto;
+  text-align: right;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: -0.02em;
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.8; }
+}
+
+.coins-image {
+  width: min(72px, 11vw);
+  height: min(72px, 11vw);
+  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
+  animation: rotate 10s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+/* Адаптивність */
+@media (max-width: 768px) {
+  #logo-section {
+    margin: 1rem;
+  }
+  
+  .logo {
+    width: min(200px, 30vw);
+  }
+  
+  .win-section,
+  .coins-section {
+    margin: 1rem;
+  }
+  
+  .bet-section {
+    margin: auto auto 1rem auto;
+  }
+  
+  .coins-section {
+    padding: 0.75rem 1rem;
+    border-radius: 16px;
+  }
+  
+  .bet-control {
+    width: 26px;
+    height: 26px;
+    font-size: 14px;
+    border-radius: 4px;
+  }
+  
+  #bet-controls {
+    gap: 0.1rem;
+    margin-left: 0.3rem;
+    padding: 6px;
+    min-width: 32px;
+    min-height: 48px;
+  }
+}
+
+@media (max-width: 480px) {
+  .win-number,
+  .bet-section,
+  .coins-number {
+    font-size: min(42px, 11vw);
+  }
+  
+  .bet-amount {
+    width: 100px;
+    min-width: 100px;
+  }
+  
+  .bet-control {
+    width: 22px;
+    height: 22px;
+    font-size: 12px;
+    border-radius: 3px;
+  }
+  
+  #bet-controls {
+    gap: 0.08rem;
+    margin-left: 0.25rem;
+    padding: 4px;
+    min-width: 26px;
+    min-height: 40px;
+  }
+  
+  .coins-image {
+    width: min(48px, 12vw);
+    height: min(48px, 12vw);
+  }
+}

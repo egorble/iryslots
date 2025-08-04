@@ -1,0 +1,59 @@
+# Dependencies
+node_modules/
+server/node_modules/
+
+# Build outputs
+dist/
+build/
+artifacts/
+cache/
+
+# Environment variables
+.env
+server/.env
+.env.local
+.env.production
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory used by tools like istanbul
+coverage/
+
+# Hardhat files
+cache/
+artifacts/
+typechain/
+typechain-types/
+
+# Temporary folders
+tmp/
+temp/
+
+# Local development
+.cache/
+.parcel-cache/
+
+# Blockchain specific
+contracts/artifacts/
+contracts/cache/

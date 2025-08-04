@@ -1,0 +1,71 @@
+@import url('https://fonts.googleapis.com/css2?family=Paytone+One&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  font-family: 'Paytone One', sans-serif;
+  user-select: none;
+  -moz-user-drag: none;
+  -webkit-user-drag: none;
+  -moz-user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  box-sizing: border-box;
+  overflow: hidden;
+  touch-action: none;
+}
+
+:root {
+  /* Awwwards-рівень кольорова палітра */
+  --primary-neon: #50ffd6;
+  --primary-white: #ffffff;
+  --primary-black: #0a0a0a;
+  --neon-light: #7ffde1;
+  --neon-dark: #2dd4aa;
+  --gray-100: #f8fafc;
+  --gray-200: #e2e8f0;
+  --gray-300: #cbd5e1;
+  --gray-700: #334155;
+  --gray-800: #1e293b;
+  --gray-900: #0f172a;
+  --shadow-neon: 0 0 20px rgba(80, 255, 214, 0.3);
+  --shadow-neon-strong: 0 0 40px rgba(80, 255, 214, 0.6);
+  --gradient-primary: linear-gradient(135deg, #0f172a 0%, #1e293b 50%, #334155 100%);
+  --gradient-neon: linear-gradient(135deg, #50ffd6 0%, #7ffde1 100%);
+}
+
+html,
+body,
+#root {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: var(--gradient-primary);
+  overflow: hidden;
+}
+
+/* Animated background particles */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: 
+    radial-gradient(circle at 20% 80%, rgba(80, 255, 214, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, rgba(80, 255, 214, 0.1) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, rgba(80, 255, 214, 0.05) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+  pointer-events: none;
+  z-index: -1;
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0px) rotate(0deg); }
+  33% { transform: translateY(-20px) rotate(1deg); }
+  66% { transform: translateY(10px) rotate(-1deg); }
+}

@@ -1,0 +1,28 @@
+{
+  "name": "cherry-charm-blockchain",
+  "version": "1.0.0",
+  "description": "Blockchain integration for Cherry Charm slot machine",
+  "scripts": {
+    "compile": "node scripts/compile.js",
+    "deploy": "npm run compile && node scripts/deploy.js",
+    "verify": "node scripts/verify.js",
+    "deploy:testnet": "IRYS_NETWORK=testnet npm run deploy",
+    "deploy:mainnet": "IRYS_NETWORK=mainnet npm run deploy"
+  },
+  "dependencies": {
+    "ethers": "^6.8.0",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "solc": "^0.8.30"
+  },
+  "keywords": [
+    "blockchain",
+    "smart-contract",
+    "irys",
+    "slot-machine",
+    "gaming"
+  ],
+  "author": "Cherry Charm Team",
+  "license": "AGPL-3.0-or-later"
+}
