@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useBlockchain } from '../hooks/useBlockchain';
+import useGame from '../stores/store';
 import './WalletManager.css';
 
 const WalletManager: React.FC = () => {
@@ -17,6 +18,8 @@ const WalletManager: React.FC = () => {
     formatIRYS,
     isMetaMaskInstalled,
   } = useBlockchain();
+
+  const { setModal } = useGame();
 
   const [depositAmount, setDepositAmount] = useState('');
   const [withdrawAmount, setWithdrawAmount] = useState('');
@@ -84,81 +87,94 @@ const WalletManager: React.FC = () => {
   }
 
   return (
-    <div className="wallet-manager">
-      {error && (
-        <div className="wallet-error">
-          <p>{error}</p>
-          <button onClick={clearError} className="clear-error-btn">
-            ✕
-          </button>
-        </div>
-      )}
+    <>
+      <div className="wallet-manager">
+        {error && (
+          <div className="wallet-error">
+            <p>{error}</p>
+            <button onClick={clearError} className="clear-error-btn">
+              ✕
+            </button>
+          </div>
+        )}
 
-      {!walletState.isConnected ? (
-        <div className="wallet-connect">
-          <h3>Підключити гаманець</h3>
-          <p>Для гри потрібно підключити MetaMask з IRYS токенами</p>
-          <button 
-            onClick={connectWallet}
-            disabled={walletState.isConnecting}
-            className="connect-wallet-btn"
-          >
-            {walletState.isConnecting ? 'Підключення...' : 'Підключити MetaMask'}
-          </button>
-        </div>
-      ) : (
-        <div className="wallet-connected">
-          <div className="wallet-info">
-            <div className="wallet-address">
-              <span className="address-label">Адреса:</span>
-              <span className="address-value">{shortenAddress(walletState.address!)}</span>
-              <button 
-                onClick={updateBalances}
-                className="refresh-btn"
-                title="Оновити баланси"
-              >
-                🔄
-              </button>
-            </div>
-            
-            <div className="balances">
-              <div className="balance-item">
-                <span className="balance-label">Гаманець:</span>
-                <span className="balance-value">{formatIRYS(walletState.balance)} IRYS</span>
+        {!walletState.isConnected ? (
+          <div className="wallet-connect">
+            <h3>Підключити гаманець</h3>
+            <p>Для гри потрібно підключити MetaMask з IRYS токенами</p>
+            <button 
+              onClick={connectWallet}
+              disabled={walletState.isConnecting}
+              className="connect-wallet-btn"
+            >
+              {walletState.isConnecting ? 'Підключення...' : 'Підключити MetaMask'}
+            </button>
+          </div>
+        ) : (
+          <div className="wallet-connected">
+            <div className="wallet-info">
+              <div className="wallet-address">
+                <span className="address-label">Адреса:</span>
+                <span className="address-value">{shortenAddress(walletState.address!)}</span>
+                <button 
+                  onClick={updateBalances}
+                  className="refresh-btn"
+                  title="Оновити баланси"
+                >
+                  🔄
+                </button>
               </div>
-              <div className="balance-item">
-                <span className="balance-label">Ігровий баланс:</span>
-                <span className="balance-value">{formatIRYS(walletState.gameBalance)} IRYS</span>
+              
+              <div className="balances">
+                <div className="balance-item">
+                  <span className="balance-label">Гаманець:</span>
+                  <span className="balance-value">{formatIRYS(walletState.balance)} IRYS</span>
+                </div>
+                <div className="balance-item">
+                  <span className="balance-label">Ігровий баланс:</span>
+                  <span className="balance-value">{formatIRYS(walletState.gameBalance)} IRYS</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="wallet-actions">
+              <div className="wallet-actions-row">
+                <button 
+                  onClick={() => setShowDepositModal(true)}
+                  className="action-btn deposit-btn"
+                  disabled={isLoading}
+                >
+                  💰 Депозит
+                </button>
+                
+                <button 
+                  onClick={() => setShowWithdrawModal(true)}
+                  className="action-btn withdraw-btn"
+                  disabled={isLoading || parseFloat(walletState.gameBalance) <= 0}
+                >
+                  💸 Вивід
+                </button>
+              </div>
+              
+              <div className="wallet-actions-row">
+                <button 
+                  onClick={() => setModal(true)}
+                  className="action-btn help-btn"
+                >
+                  ❓ Допомога
+                </button>
+                
+                <button 
+                  onClick={disconnectWallet}
+                  className="action-btn disconnect-btn"
+                >
+                  🔌 Відключити
+                </button>
               </div>
             </div>
           </div>
-
-          <div className="wallet-actions">
-            <button 
-              onClick={() => setShowDepositModal(true)}
-              className="action-btn deposit-btn"
-              disabled={isLoading}
-            >
-              💰 Депозит
-            </button>
-            
-            <button 
-              onClick={() => setShowWithdrawModal(true)}
-              className="action-btn withdraw-btn"
-              disabled={isLoading || parseFloat(walletState.gameBalance) <= 0}
-            >
-              💸 Вивід
-            </button>
-            
-            <button 
-              onClick={disconnectWallet}
-              className="action-btn disconnect-btn"
-            >
-              🔌 Відключити
-            </button>
-          </div>
-        </div>
-      )}
+        )}
+      </div>
 
       {/* Модальне вікно депозиту */}
       {showDepositModal && (
@@ -261,7 +277,7 @@ const WalletManager: React.FC = () => {
           </div>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

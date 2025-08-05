@@ -16,7 +16,6 @@
 
 import useGame from '../stores/store';
 import HelpModal from './helpModal/HelpModal';
-import HelpButton from './helpButton/HelpButton';
 import useAnimatedNumber from '../hooks/useAnimatedNumber';
 import WalletManager from '../components/WalletManager';
 import './style.css';
@@ -30,9 +29,6 @@ const Interface = () => {
     <>
       {/* Wallet Manager */}
       <WalletManager />
-
-      {/* Help Button */}
-      <HelpButton />
 
       {/* Modal */}
       {modal && <HelpModal />}

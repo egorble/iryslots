@@ -114,6 +114,13 @@
   line-height: 1;
 }
 
+.bet-label {
+  white-space: nowrap;
+  pointer-events: none;
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
 .bet-amount {
   width: 120px;
   white-space: nowrap;
