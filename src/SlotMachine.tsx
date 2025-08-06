@@ -62,6 +62,9 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
     bet,
     coins,
     updateCoins,
+    isProcessingTransaction,
+    setProcessingTransaction,
+    setShowTransactionModal,
   } = useGame((state) => state);
 
   const reelRefs = [
@@ -76,9 +79,26 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
 
   // Handle blockchain game results
   const handleBlockchainGameResult = async (winAmount: number, betAmount: number) => {
+    setProcessingTransaction(true);
+    
+    // Show modal after 5 seconds delay
+    const modalTimeoutId = setTimeout(() => {
+      setShowTransactionModal(true);
+    }, 5000);
+    
+    // Set timeout to prevent infinite processing state
+    const processingTimeoutId = setTimeout(() => {
+      devLog('Transaction timeout - resetting processing state');
+      setProcessingTransaction(false);
+      setShowTransactionModal(false);
+    }, 30000); // 30 seconds timeout
+    
     try {
       const address = await blockchainService.getAddress();
-      if (!address) return;
+      if (!address) {
+        setProcessingTransaction(false);
+        return;
+      }
 
       // Prepare game result data
       const gameResult = {
@@ -119,6 +139,12 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
       devLog(`Error handling blockchain game result: ${error}`);
       // Fallback to local balance update
       updateCoins(winAmount - betAmount);
+    } finally {
+      // Clear timeouts and reset processing state
+      clearTimeout(modalTimeoutId);
+      clearTimeout(processingTimeoutId);
+      setProcessingTransaction(false);
+      setShowTransactionModal(false);
     }
   };
 
@@ -146,7 +172,7 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
 
   const spinSlotMachine = useCallback(async () => {
     // Check if we can spin and deduct coins
-    if (phase === 'spinning' || coins < bet || spinInProgressRef.current) {
+    if (phase === 'spinning' || coins < bet || spinInProgressRef.current || isProcessingTransaction) {
       return;
     }
 

@@ -84,6 +84,12 @@ type State = {
   start: () => void;
   end: () => void;
 
+  // Transaction processing
+  isProcessingTransaction: boolean;
+  setProcessingTransaction: (processing: boolean) => void;
+  showTransactionModal: boolean;
+  setShowTransactionModal: (show: boolean) => void;
+
   // First time
   firstTime: boolean;
   setFirstTime: (isFirstTime: boolean) => void;
@@ -304,6 +310,22 @@ const useGame = create<State>()(
         }
         return {};
       });
+    },
+
+    /**
+     * Transaction processing
+     */
+    isProcessingTransaction: false,
+    setProcessingTransaction: (processing: boolean) => {
+      set(() => ({
+        isProcessingTransaction: processing,
+      }));
+    },
+    showTransactionModal: false,
+    setShowTransactionModal: (show: boolean) => {
+      set(() => ({
+        showTransactionModal: show,
+      }));
     },
 
     /**

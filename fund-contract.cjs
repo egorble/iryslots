@@ -28,7 +28,7 @@ async function fundContract() {
     console.log(`🏦 Поточний баланс контракту: ${formatIRYS(contractBalanceBefore)} IRYS`);
     
     // Сума для поповнення (можна змінити)
-    const fundAmount = parseIRYS('1.0'); // 1 IRYS
+    const fundAmount = parseIRYS('10.0'); // 1 IRYS
     
     if (senderBalance < fundAmount) {
       console.error(`❌ Недостатньо коштів. Потрібно: ${formatIRYS(fundAmount)} IRYS`);

@@ -19,6 +19,65 @@
   z-index: -1;
 }
 
+/* Transaction Processing Overlay */
+.transaction-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  backdrop-filter: blur(10px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.transaction-modal {
+  background: var(--gradient-overlay);
+  border: 2px solid var(--primary-neon);
+  border-radius: var(--radius-xl);
+  padding: var(--space-2xl);
+  text-align: center;
+  box-shadow: var(--shadow-neon-strong);
+  max-width: 400px;
+  width: 90%;
+}
+
+.transaction-spinner {
+  width: 60px;
+  height: 60px;
+  border: 4px solid rgba(80, 255, 214, 0.2);
+  border-top: 4px solid var(--primary-neon);
+  border-radius: 50%;
+  margin: 0 auto var(--space-lg);
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% { transform: rotate(0deg); }
+  100% { transform: rotate(360deg); }
+}
+
+.transaction-text {
+  font-family: var(--font-primary);
+  font-size: clamp(1.5rem, 4vw, 2rem);
+  font-weight: 800;
+  color: var(--primary-neon);
+  margin-bottom: var(--space-md);
+  filter: drop-shadow(0 0 10px rgba(80, 255, 214, 0.5));
+}
+
+.transaction-subtext {
+  font-family: var(--font-secondary);
+  font-size: clamp(0.9rem, 2.5vw, 1.1rem);
+  color: var(--primary-white);
+  opacity: 0.8;
+  line-height: 1.4;
+}
+
 /* Logo section - top left */
 #logo-section {
   position: fixed;
@@ -361,5 +420,38 @@
   
   .logo-text {
     font-size: clamp(1.2rem, 5vw, 2rem);
+  }
+}
+
+/* Transaction overlay responsive styles */
+@media (max-width: 768px) {
+  .transaction-modal {
+    padding: var(--space-lg);
+    max-width: 350px;
+  }
+  
+  .transaction-spinner {
+    width: 50px;
+    height: 50px;
+  }
+}
+
+@media (max-width: 480px) {
+  .transaction-modal {
+    padding: var(--space-md);
+    max-width: 300px;
+  }
+  
+  .transaction-spinner {
+    width: 40px;
+    height: 40px;
+  }
+  
+  .transaction-text {
+    font-size: clamp(1.2rem, 5vw, 1.5rem);
+  }
+  
+  .transaction-subtext {
+    font-size: clamp(0.8rem, 3vw, 1rem);
   }
 }

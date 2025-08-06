@@ -21,7 +21,7 @@ import WalletManager from '../components/WalletManager';
 import './style.css';
 
 const Interface = () => {
-  const { modal, coins, win, bet, phase, updateBet } = useGame(
+  const { modal, coins, win, bet, phase, updateBet, isProcessingTransaction } = useGame(
     (state) => state
   );
   const animatedCoins = useAnimatedNumber(coins);
@@ -32,6 +32,17 @@ const Interface = () => {
 
       {/* Modal */}
       {modal && <HelpModal />}
+
+      {/* Transaction Processing Overlay */}
+      {isProcessingTransaction && (
+        <div className="transaction-overlay">
+          <div className="transaction-modal">
+            <div className="transaction-spinner"></div>
+            <div className="transaction-text">Processing Transaction...</div>
+            <div className="transaction-subtext">Please wait while your transaction is being processed on the blockchain</div>
+          </div>
+        </div>
+      )}
 
       {/* Logo */}
       <div id="logo-section">
