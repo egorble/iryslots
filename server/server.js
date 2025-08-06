@@ -9,6 +9,7 @@ import winston from 'winston';
 import fs from 'fs';
 import path from 'path';
 import { fileURLToPath } from 'url';
+import WalletManager from './WalletManager.js';
 
 // ES modules setup
 const __filename = fileURLToPath(import.meta.url);
@@ -25,7 +26,7 @@ const logger = winston.createLogger({
     winston.format.errors({ stack: true }),
     winston.format.json()
   ),
-  defaultMeta: { service: 'cherry-charm-server' },
+  defaultMeta: { service: 'irys-slots-server' },
   transports: [
     new winston.transports.File({ filename: 'logs/error.log', level: 'error' }),
     new winston.transports.File({ filename: 'logs/combined.log' }),
@@ -45,18 +46,23 @@ if (!fs.existsSync('logs')) {
 
 // Blockchain setup
 const provider = new ethers.JsonRpcProvider(process.env.IRYS_RPC_URL);
-const serverWallet = new ethers.Wallet(process.env.SERVER_WALLET_KEY, provider);
 
 // Load contract ABI
 const contractABI = JSON.parse(
   fs.readFileSync(path.join(__dirname, '../artifacts/SlotMachineBank.abi.json'), 'utf8')
 );
 
-const contract = new ethers.Contract(
-  process.env.CONTRACT_ADDRESS,
+// Ініціалізуємо WalletManager для балансування навантаження
+const walletManager = new WalletManager(
+  provider,
   contractABI,
-  serverWallet
+  process.env.CONTRACT_ADDRESS,
+  logger
 );
+
+// Отримуємо основний контракт для читання (не для транзакцій)
+const primaryWallet = walletManager.getPrimaryWallet();
+const contract = primaryWallet.contract;
 
 // Express app setup
 const app = express();
@@ -180,9 +186,74 @@ app.get('/health', (req, res) => {
     blockchain: {
       network: process.env.IRYS_NETWORK,
       contract: process.env.CONTRACT_ADDRESS,
-      serverWallet: serverWallet.address
+      serverWallets: walletManager.getWalletStats().map(w => ({
+        name: w.name,
+        address: w.address,
+        isAvailable: w.isAvailable
+      }))
     }
   });
+});
+
+// Wallet statistics endpoint
+app.get('/api/wallets/stats', (req, res) => {
+  try {
+    const stats = walletManager.getDetailedStats();
+    res.json({
+      success: true,
+      data: {
+        ...stats,
+        wallets: stats.wallets.map(wallet => ({
+          ...wallet,
+          lastUsedAgo: wallet.lastUsed ? Date.now() - wallet.lastUsed : null,
+          lastUsedFormatted: wallet.lastUsed ? new Date(wallet.lastUsed).toISOString() : null
+        }))
+      }
+    });
+  } catch (error) {
+    logger.error('Error getting wallet stats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get wallet statistics'
+    });
+  }
+});
+
+// Queue statistics endpoint
+app.get('/api/queue/stats', (req, res) => {
+  try {
+    const queueStats = walletManager.getQueueStats();
+    res.json({
+      success: true,
+      data: queueStats
+    });
+  } catch (error) {
+    logger.error('Error getting queue stats:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to get queue statistics'
+    });
+  }
+});
+
+// Clear queue endpoint (admin only)
+app.post('/api/queue/clear', (req, res) => {
+  try {
+    const clearedCount = walletManager.clearQueue();
+    res.json({
+      success: true,
+      data: {
+        message: `Черга очищена, відхилено ${clearedCount} транзакцій`,
+        clearedTransactions: clearedCount
+      }
+    });
+  } catch (error) {
+    logger.error('Error clearing queue:', error);
+    res.status(500).json({
+      success: false,
+      error: 'Failed to clear queue'
+    });
+  }
 });
 
 // Get player balance
@@ -301,9 +372,11 @@ app.post('/api/game-result', gameRateLimiter, async (req, res) => {
     let reason;
 
     if (netChange > 0) {
-      // Player won
+      // Player won - використовуємо WalletManager для балансування навантаження
       reason = `win-${fruit0}-${fruit1}-${fruit2}`;
-      const tx = await contract.updateBalance(playerAddress, netChangeWei, reason);
+      const tx = await walletManager.executeTransaction(
+        async (contract) => contract.updateBalance(playerAddress, netChangeWei, reason)
+      );
       txHash = tx.hash;
       await tx.wait();
       
@@ -315,9 +388,11 @@ app.post('/api/game-result', gameRateLimiter, async (req, res) => {
       });
       
     } else if (netChange < 0) {
-      // Player lost
+      // Player lost - використовуємо WalletManager для балансування навантаження
       reason = `loss-${fruit0}-${fruit1}-${fruit2}`;
-      const tx = await contract.updateBalance(playerAddress, -netChangeWei, reason);
+      const tx = await walletManager.executeTransaction(
+        async (contract) => contract.updateBalance(playerAddress, -netChangeWei, reason)
+      );
       txHash = tx.hash;
       await tx.wait();
       
@@ -436,10 +511,20 @@ app.use((req, res) => {
 
 // Start server
 app.listen(PORT, () => {
-  logger.info(`🚀 Cherry Charm server started on port ${PORT}`);
+  logger.info(`🚀 IRYS Slots server started on port ${PORT}`);
   logger.info(`📍 Contract: ${process.env.CONTRACT_ADDRESS}`);
   logger.info(`🔗 Network: ${process.env.IRYS_NETWORK}`);
-  logger.info(`👛 Server wallet: ${serverWallet.address}`);
+  
+  // Виводимо інформацію про всі гаманці
+  logger.info(`👛 Серверні гаманці (${walletManager.wallets.length}):`);
+  walletManager.getWalletStats().forEach(wallet => {
+    logger.info(`   ${wallet.name}: ${wallet.address}`);
+  });
+
+  // Періодичне логування статистики гаманців (кожні 5 хвилин)
+  setInterval(() => {
+    walletManager.logStats();
+  }, 5 * 60 * 1000);
 });
 
 // Graceful shutdown

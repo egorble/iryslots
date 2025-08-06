@@ -17,10 +17,10 @@ export const useBlockchain = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [minDeposit, setMinDeposit] = useState<string>('0.01');
 
-  // Підключення гаманця
+  // Connect wallet
   const connectWallet = useCallback(async () => {
     if (!isMetaMaskInstalled()) {
-      setError('MetaMask не встановлено. Будь ласка, встановіть MetaMask для продовження.');
+      setError('MetaMask is not installed. Please install MetaMask to continue.');
       return;
     }
 
@@ -29,9 +29,9 @@ export const useBlockchain = () => {
 
     try {
       const address = await blockchainService.connectWallet();
-      devLog(`Гаманець підключено: ${address}`);
+      devLog(`Wallet connected: ${address}`);
 
-      // Отримуємо баланси
+      // Get balances
       const [nativeBalance, gameBalance, minDep] = await Promise.all([
         blockchainService.getNativeBalance(address),
         blockchainService.getGameBalance(address),
@@ -48,30 +48,30 @@ export const useBlockchain = () => {
 
       setMinDeposit(minDep);
 
-      // Синхронізуємо з store
+      // Sync with store
       const { syncWithBlockchain } = useGame.getState();
       await syncWithBlockchain();
 
-      // Підписуємося на події контракту
+      // Subscribe to contract events
       blockchainService.subscribeToEvents((event) => {
-        devLog(`Подія контракту: ${event.type}`);
+        devLog(`Contract event: ${event.type}`);
 
-        // Оновлюємо баланси при подіях
+        // Update balances on events
         if (event.player.toLowerCase() === address.toLowerCase()) {
           updateBalances();
-          // Також синхронізуємо з store
+          // Also sync with store
           syncWithBlockchain();
         }
       });
 
     } catch (err: any) {
-      devLog(`Помилка підключення гаманця: ${err.message}`);
+      devLog(`Wallet connection error: ${err.message}`);
       setError(err.message);
       setWalletState(prev => ({ ...prev, isConnecting: false }));
     }
   }, []);
 
-  // Відключення гаманця
+  // Disconnect wallet
   const disconnectWallet = useCallback(() => {
     blockchainService.unsubscribeFromEvents();
     setWalletState({
@@ -82,10 +82,10 @@ export const useBlockchain = () => {
       isConnecting: false,
     });
     setError(null);
-    devLog('Гаманець відключено');
+    devLog('Wallet disconnected');
   }, []);
 
-  // Оновлення балансів
+  // Update balances
   const updateBalances = useCallback(async () => {
     if (!walletState.address || !blockchainService.isConnected()) return;
 
@@ -122,14 +122,14 @@ export const useBlockchain = () => {
         gameBalance,
       }));
     } catch (err: any) {
-      devLog(`Помилка оновлення балансів: ${err.message}`);
+      devLog(`Balance update error: ${err.message}`);
     }
   }, [walletState.address]);
 
-  // Депозит коштів
+  // Deposit funds
   const deposit = useCallback(async (amount: string): Promise<boolean> => {
     if (!walletState.isConnected) {
-      setError('Гаманець не підключено');
+      setError('Wallet not connected');
       return false;
     }
 
@@ -180,7 +180,7 @@ export const useBlockchain = () => {
     }
   }, [walletState.isConnected, updateBalances]);
 
-  // Перевірка достатності коштів для ставки
+  // Check sufficient balance for bet
   const hasSufficientBalance = useCallback(async (betAmount: string): Promise<boolean> => {
     if (!walletState.address) return false;
 
@@ -197,7 +197,7 @@ export const useBlockchain = () => {
     setError(null);
   }, []);
 
-  // Перевірка підключення при завантаженні
+  // Check connection on load
   useEffect(() => {
     const checkConnection = async () => {
       if (!isMetaMaskInstalled()) return;
@@ -205,18 +205,18 @@ export const useBlockchain = () => {
       try {
         const accounts = await window.ethereum?.request({ method: 'eth_accounts' });
         if (accounts && accounts.length > 0) {
-          // Автоматично підключаємося, якщо гаманець вже авторизований
+          // Auto-connect if wallet is already authorized
           await connectWallet();
         }
       } catch (err) {
-        devLog('Помилка перевірки підключення:', err);
+        devLog('Connection check error:', err);
       }
     };
 
     checkConnection();
   }, [connectWallet]);
 
-  // Слухаємо зміни акаунтів
+  // Listen to account changes
   useEffect(() => {
     if (!isMetaMaskInstalled()) return;
 

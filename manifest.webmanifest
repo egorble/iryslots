@@ -1,10 +1,10 @@
 {
-  "name": "Cherry Charm",
-  "short_name": "Cherry Charm",
+  "name": "IRYS Slots",
+  "short_name": "IRYS Slots",
   "display": "standalone",
   "theme_color": "#121215",
   "background_color": "#121215",
-  "description": "An online 3D slot machine game.",
+  "description": "IRYS Slots - An online 3D slot machine game powered by IRYS blockchain.",
   "icons": [
     {
       "src": "icons/android-chrome-192x192.png",

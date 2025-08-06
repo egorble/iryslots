@@ -1,7 +1,7 @@
 {
-  "name": "cherry-charm-server",
+  "name": "irys-slots-server",
   "version": "1.0.0",
-  "description": "Backend server for Cherry Charm blockchain integration",
+  "description": "Backend server for IRYS Slots blockchain integration",
   "main": "server.js",
   "type": "module",
   "scripts": {
@@ -20,12 +20,14 @@
     "winston": "^3.11.0"
   },
   "keywords": [
+    "IRYS slots",
     "blockchain",
     "gaming",
     "irys",
     "slot-machine",
-    "web3"
+    "web3",
+    "crypto-gaming"
   ],
-  "author": "Cherry Charm Team",
+  "author": "IRYS Slots Team",
   "license": "AGPL-3.0-or-later"
 }

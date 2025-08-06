@@ -1,8 +1,8 @@
-# 🎰 Cherry Charm - Blockchain Slot Machine
+# 🎰 IRYS Slots - Blockchain Slot Machine
 
-A modern, blockchain-integrated slot machine game built with React Three Fiber and IRYS tokens.
+A modern, blockchain-integrated slot machine game built with React Three Fiber and powered by IRYS blockchain.
 
-![Cherry Charm](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
+![IRYS Slots](https://img.shields.io/badge/Status-Production%20Ready-brightgreen)
 ![Blockchain](https://img.shields.io/badge/Blockchain-IRYS-50ffd6)
 ![React](https://img.shields.io/badge/React-18.x-61dafb)
 ![Three.js](https://img.shields.io/badge/Three.js-Latest-black)

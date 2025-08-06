@@ -35,48 +35,54 @@ const Interface = () => {
 
       {/* Logo */}
       <div id="logo-section">
-        <a
-          href="https://github.com/michaelkolesidis/cherry-charm"
-          target="_blank"
-        >
-          <img className="logo" src="./images/logo.png" alt="" />
-        </a>
+        <div className="logo-container">
+          {/* You can choose between text and SVG logo */}
+          <div className="logo-text">
+            IRYS SLOTS
+          </div>
+          {/* Alternatively, you can use SVG logo:
+          <img className="logo" src="./images/irys-slots-logo.svg" alt="IRYS Slots" />
+          */}
+        </div>
 
         <div id="version">{__APP_VERSION__}</div>
       </div>
 
       <div className="interface">
-        {/* Coins */}
-        <div className="coins-section">
-          <div className="coins-number">{animatedCoins}</div>
-          <img className="coins-image" src="./images/coin.png" />
-        </div>
+        {/* Game UI - new layout */}
+        <div className="game-ui">
+          {/* Win section */}
+          <div className="win-section">
+            <div className="win-number">WIN: {win}</div>
+          </div>
 
-        {/* Bet */}
-        <div className="bet-section">
-          <div className="bet-label">BET:</div>
-          <div className="bet-amount">{bet}</div>
-          <div id="bet-controls" className={phase === 'idle' ? '' : 'hidden'}>
-            <div
-              id="increase-bet"
-              className="bet-control"
-              onClick={() => updateBet(1)}
-            >
-              ⏶
-            </div>
-            <div
-              id="decrease-bet"
-              className="bet-control"
-              onClick={() => updateBet(-1)}
-            >
-              ⏷
+          {/* Bet section */}
+          <div className="bet-section">
+            <div className="bet-label">BET:</div>
+            <div className="bet-amount">{bet}</div>
+            <div id="bet-controls" className={phase === 'idle' ? '' : 'hidden'}>
+              <div
+                id="increase-bet"
+                className="bet-control"
+                onClick={() => updateBet(1)}
+              >
+                ⏶
+              </div>
+              <div
+                id="decrease-bet"
+                className="bet-control"
+                onClick={() => updateBet(-1)}
+              >
+                ⏷
+              </div>
             </div>
           </div>
-        </div>
 
-        {/* Spins */}
-        <div className="win-section">
-          <div className="win-number">WIN: {win}</div>
+          {/* Coins section */}
+          <div className="coins-section">
+            <div className="coins-number">{animatedCoins}</div>
+            <img className="coins-image" src="./images/coin.png" alt="Coins" />
+          </div>
         </div>
       </div>
     </>

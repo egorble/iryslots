@@ -6,13 +6,18 @@ pragma solidity 0.8.30;
  * @dev Smart contract for managing player balances in Cherry Charm slot machine
  * @notice This contract handles deposits, withdrawals, and balance updates for the game
  * Uses native IRYS tokens (like ETH)
+ * Supports multiple authorized server wallets for load balancing
  */
 contract SlotMachineBank {
     
     // Contract owner
     address public owner;
     
-    // Server wallet that can modify player balances
+    // Multiple authorized server wallets for load balancing
+    mapping(address => bool) public authorizedServers;
+    address[] public serverWalletsList;
+    
+    // Legacy support - primary server wallet (for backward compatibility)
     address public serverWallet;
     
     // Player balances mapping (in-game balance)
@@ -35,6 +40,8 @@ contract SlotMachineBank {
     event Withdrawal(address indexed player, uint256 amount, uint256 newBalance);
     event BalanceUpdated(address indexed player, int256 change, uint256 newBalance, string reason);
     event ServerWalletUpdated(address indexed oldServer, address indexed newServer);
+    event ServerWalletAdded(address indexed serverWallet);
+    event ServerWalletRemoved(address indexed serverWallet);
     event MinDepositUpdated(uint256 oldAmount, uint256 newAmount);
     event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
     event Paused(address account);
@@ -59,7 +66,7 @@ contract SlotMachineBank {
     }
     
     modifier onlyServer() {
-        if (msg.sender != serverWallet) revert OnlyServer();
+        if (!authorizedServers[msg.sender]) revert OnlyServer();
         _;
     }
     
@@ -82,11 +89,15 @@ contract SlotMachineBank {
     
     /**
      * @dev Constructor
-     * @param _serverWallet Address of the server wallet
+     * @param _serverWallet Address of the primary server wallet
      */
     constructor(address _serverWallet) validAddress(_serverWallet) {
         owner = msg.sender;
         serverWallet = _serverWallet;
+        
+        // Add primary server wallet to authorized list
+        authorizedServers[_serverWallet] = true;
+        serverWalletsList.push(_serverWallet);
     }
     
     /**
@@ -171,13 +182,98 @@ contract SlotMachineBank {
     // Admin functions
     
     /**
-     * @dev Update server wallet address (only owner)
-     * @param newServerWallet New server wallet address
+     * @dev Update primary server wallet address (only owner)
+     * @param newServerWallet New primary server wallet address
      */
     function updateServerWallet(address newServerWallet) external onlyOwner validAddress(newServerWallet) {
         address oldServer = serverWallet;
+        
+        // Remove old primary from authorized list if it exists
+        if (authorizedServers[oldServer]) {
+            authorizedServers[oldServer] = false;
+            _removeFromServerList(oldServer);
+        }
+        
+        // Set new primary and add to authorized list
         serverWallet = newServerWallet;
+        authorizedServers[newServerWallet] = true;
+        serverWalletsList.push(newServerWallet);
+        
         emit ServerWalletUpdated(oldServer, newServerWallet);
+    }
+    
+    /**
+     * @dev Add a new authorized server wallet (only owner)
+     * @param newServerWallet Address of the new server wallet
+     */
+    function addServerWallet(address newServerWallet) external onlyOwner validAddress(newServerWallet) {
+        if (authorizedServers[newServerWallet]) {
+            revert("Server wallet already authorized");
+        }
+        
+        authorizedServers[newServerWallet] = true;
+        serverWalletsList.push(newServerWallet);
+        
+        emit ServerWalletAdded(newServerWallet);
+    }
+    
+    /**
+     * @dev Remove an authorized server wallet (only owner)
+     * @param serverWalletToRemove Address of the server wallet to remove
+     */
+    function removeServerWallet(address serverWalletToRemove) external onlyOwner validAddress(serverWalletToRemove) {
+        if (!authorizedServers[serverWalletToRemove]) {
+            revert("Server wallet not authorized");
+        }
+        
+        // Cannot remove the primary server wallet
+        if (serverWalletToRemove == serverWallet) {
+            revert("Cannot remove primary server wallet");
+        }
+        
+        authorizedServers[serverWalletToRemove] = false;
+        _removeFromServerList(serverWalletToRemove);
+        
+        emit ServerWalletRemoved(serverWalletToRemove);
+    }
+    
+    /**
+     * @dev Internal function to remove address from server wallets list
+     * @param walletToRemove Address to remove from the list
+     */
+    function _removeFromServerList(address walletToRemove) internal {
+        for (uint256 i = 0; i < serverWalletsList.length; i++) {
+            if (serverWalletsList[i] == walletToRemove) {
+                serverWalletsList[i] = serverWalletsList[serverWalletsList.length - 1];
+                serverWalletsList.pop();
+                break;
+            }
+        }
+    }
+    
+    /**
+     * @dev Check if an address is an authorized server wallet
+     * @param wallet Address to check
+     * @return True if the address is authorized
+     */
+    function isAuthorizedServer(address wallet) external view returns (bool) {
+        return authorizedServers[wallet];
+    }
+    
+    /**
+     * @dev Get all authorized server wallets
+     * @return Array of authorized server wallet addresses
+     */
+    function getAuthorizedServers() external view returns (address[] memory) {
+        return serverWalletsList;
+    }
+    
+    /**
+     * @dev Get the number of authorized server wallets
+     * @return Number of authorized server wallets
+     */
+    function getAuthorizedServersCount() external view returns (uint256) {
+        return serverWalletsList.length;
     }
     
     /**

@@ -1,7 +1,7 @@
 import { ethers } from 'ethers';
 import contractABI from '../../artifacts/SlotMachineBank.abi.json';
 
-// Конфігурація мережі IRYS
+// IRYS Network Configuration
 export const IRYS_CONFIG = {
   chainId: parseInt(import.meta.env.VITE_IRYS_CHAIN_ID || '1270'),
   chainName: 'IRYS Testnet',
@@ -16,7 +16,7 @@ export const IRYS_CONFIG = {
 
 export const CONTRACT_ADDRESS = import.meta.env.VITE_CONTRACT_ADDRESS;
 
-// Типи для TypeScript
+// TypeScript Types
 export interface WalletState {
   address: string | null;
   balance: string;
@@ -30,7 +30,7 @@ export interface ContractError extends Error {
   reason?: string;
 }
 
-// Клас для роботи з блокчейном
+// Blockchain Service Class
 export class BlockchainService {
   private provider: ethers.BrowserProvider | null = null;
   private signer: ethers.JsonRpcSigner | null = null;
@@ -46,40 +46,40 @@ export class BlockchainService {
     }
   }
 
-  // Підключення гаманця
+  // Connect wallet
   async connectWallet(): Promise<string> {
     if (!window.ethereum) {
-      throw new Error('MetaMask не встановлено. Будь ласка, встановіть MetaMask для продовження.');
+      throw new Error('MetaMask is not installed. Please install MetaMask to continue.');
     }
 
     try {
-      // Запитуємо дозвіл на підключення
+      // Request connection permission
       const accounts = await window.ethereum.request({
         method: 'eth_requestAccounts',
       });
 
       if (!accounts || accounts.length === 0) {
-        throw new Error('Не вдалося отримати доступ до гаманця');
+        throw new Error('Failed to access wallet');
       }
 
-      // Перевіряємо мережу
+      // Check network
       await this.switchToIrysNetwork();
 
-      // Ініціалізуємо провайдер та підписувача
+      // Initialize provider and signer
       this.provider = new ethers.BrowserProvider(window.ethereum);
       this.signer = await this.provider.getSigner();
       
-      // Ініціалізуємо контракт
+      // Initialize contract
       this.contract = new ethers.Contract(CONTRACT_ADDRESS, contractABI, this.signer);
 
       return accounts[0];
     } catch (error) {
-      console.error('Помилка підключення гаманця:', error);
+      console.error('Wallet connection error:', error);
       throw error;
     }
   }
 
-  // Перемикання на мережу IRYS
+  // Switch to IRYS network
   async switchToIrysNetwork(): Promise<void> {
     if (!window.ethereum) return;
 
@@ -89,7 +89,7 @@ export class BlockchainService {
         params: [{ chainId: `0x${IRYS_CONFIG.chainId.toString(16)}` }],
       });
     } catch (switchError: any) {
-      // Якщо мережа не додана, додаємо її
+      // If network is not added, add it
       if (switchError.code === 4902) {
         await window.ethereum.request({
           method: 'wallet_addEthereumChain',
@@ -109,42 +109,42 @@ export class BlockchainService {
     }
   }
 
-  // Отримання балансу нативних токенів
+  // Get native token balance
   async getNativeBalance(address: string): Promise<string> {
-    if (!this.provider) throw new Error('Провайдер не ініціалізовано');
+    if (!this.provider) throw new Error('Provider not initialized');
     
     const balance = await this.provider.getBalance(address);
     return ethers.formatEther(balance);
   }
 
-  // Отримання ігрового балансу
+  // Get game balance
   async getGameBalance(address: string): Promise<string> {
-    if (!this.contract) throw new Error('Контракт не ініціалізовано');
+    if (!this.contract) throw new Error('Contract not initialized');
     
     const balance = await this.contract.getBalance(address);
     return ethers.formatEther(balance);
   }
 
-  // Депозит коштів
+  // Deposit funds
   async deposit(amount: string): Promise<string> {
-    if (!this.contract) throw new Error('Контракт не ініціалізовано');
+    if (!this.contract) throw new Error('Contract not initialized');
     
     try {
       const value = ethers.parseEther(amount);
       const tx = await this.contract.deposit({ value });
       
-      // Очікуємо підтвердження
+      // Wait for confirmation
       const receipt = await tx.wait();
       return receipt.hash;
     } catch (error) {
-      console.error('Помилка депозиту:', error);
+      console.error('Deposit error:', error);
       throw this.parseContractError(error);
     }
   }
 
-  // Вивід коштів
+  // Withdraw funds
   async withdraw(amount: string): Promise<string> {
-    if (!this.contract) throw new Error('Контракт не ініціалізовано');
+    if (!this.contract) throw new Error('Contract not initialized');
     
     try {
       const value = ethers.parseEther(amount);
@@ -153,32 +153,32 @@ export class BlockchainService {
       const receipt = await tx.wait();
       return receipt.hash;
     } catch (error) {
-      console.error('Помилка виводу:', error);
+      console.error('Withdraw error:', error);
       throw this.parseContractError(error);
     }
   }
 
-  // Перевірка достатності коштів для ставки
+  // Check sufficient balance for bet
   async hasSufficientBalance(address: string, betAmount: string): Promise<boolean> {
-    if (!this.contract) throw new Error('Контракт не ініціалізовано');
+    if (!this.contract) throw new Error('Contract not initialized');
     
     const value = ethers.parseEther(betAmount);
     return await this.contract.hasSufficientBalance(address, value);
   }
 
-  // Отримання мінімального депозиту
+  // Get minimum deposit
   async getMinDeposit(): Promise<string> {
-    if (!this.contract) throw new Error('Контракт не ініціалізовано');
+    if (!this.contract) throw new Error('Contract not initialized');
     
     const minDeposit = await this.contract.minDeposit();
     return ethers.formatEther(minDeposit);
   }
 
-  // Підписка на події контракту
+  // Subscribe to contract events
   subscribeToEvents(callback: (event: any) => void) {
     if (!this.contract) return;
 
-    // Підписуємося на події депозиту
+    // Subscribe to deposit events
     this.contract.on('Deposit', (player, amount, newBalance, event) => {
       callback({
         type: 'Deposit',
@@ -189,7 +189,7 @@ export class BlockchainService {
       });
     });
 
-    // Підписуємося на події виводу
+    // Subscribe to withdrawal events
     this.contract.on('Withdrawal', (player, amount, newBalance, event) => {
       callback({
         type: 'Withdrawal',
@@ -200,7 +200,7 @@ export class BlockchainService {
       });
     });
 
-    // Підписуємося на оновлення балансу
+    // Subscribe to balance updates
     this.contract.on('BalanceUpdated', (player, change, newBalance, reason, event) => {
       callback({
         type: 'BalanceUpdated',
@@ -213,54 +213,54 @@ export class BlockchainService {
     });
   }
 
-  // Відписка від подій
+  // Unsubscribe from events
   unsubscribeFromEvents() {
     if (this.contract) {
       this.contract.removeAllListeners();
     }
   }
 
-  // Парсинг помилок контракту
+  // Parse contract errors
   private parseContractError(error: any): ContractError {
     if (error.reason) {
       return new Error(error.reason) as ContractError;
     }
     
     if (error.code === 'INSUFFICIENT_FUNDS') {
-      return new Error('Недостатньо коштів для виконання операції') as ContractError;
+      return new Error('Insufficient funds to perform operation') as ContractError;
     }
     
     if (error.message?.includes('BelowMinimumDeposit')) {
-      return new Error('Сума депозиту менше мінімальної') as ContractError;
+      return new Error('Deposit amount is below minimum') as ContractError;
     }
     
     if (error.message?.includes('InsufficientBalance')) {
-      return new Error('Недостатньо коштів на ігровому балансі') as ContractError;
+      return new Error('Insufficient funds in game balance') as ContractError;
     }
     
     if (error.message?.includes('AmountTooSmall')) {
-      return new Error('Сума занадто мала') as ContractError;
+      return new Error('Amount too small') as ContractError;
     }
     
-    return new Error('Помилка виконання операції') as ContractError;
+    return new Error('Operation execution error') as ContractError;
   }
 
-  // Перевірка підключення
+  // Check connection
   isConnected(): boolean {
     return !!this.signer && !!this.contract;
   }
 
-  // Отримання адреси підключеного гаманця
+  // Get connected wallet address
   async getAddress(): Promise<string | null> {
     if (!this.signer) return null;
     return await this.signer.getAddress();
   }
 }
 
-// Глобальний інстанс сервісу
+// Global service instance
 export const blockchainService = new BlockchainService();
 
-// Утилітарні функції
+// Utility functions
 export const formatIRYS = (amount: string | number): string => {
   const num = typeof amount === 'string' ? parseFloat(amount) : amount;
   return num.toFixed(4);
@@ -270,7 +270,7 @@ export const parseIRYS = (amount: string): string => {
   return ethers.parseEther(amount).toString();
 };
 
-// Перевірка наявності MetaMask
+// Check MetaMask availability
 export const isMetaMaskInstalled = (): boolean => {
   return typeof window !== 'undefined' && !!window.ethereum;
 };

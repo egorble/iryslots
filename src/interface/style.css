@@ -1,57 +1,85 @@
-/* Awwwards-рівень кольорова палітра */
-:root {
-  --primary-neon: #50ffd6;
-  --primary-white: #ffffff;
-  --primary-black: #0a0a0a;
-  --neon-light: #7ffde1;
-  --neon-dark: #2dd4aa;
-  --gray-100: #f8fafc;
-  --gray-700: #334155;
-  --gray-800: #1e293b;
-  --gray-900: #0f172a;
-  --shadow-neon: 0 0 20px rgba(80, 255, 214, 0.3);
-  --shadow-neon-strong: 0 0 40px rgba(80, 255, 214, 0.6);
-  --gradient-neon: linear-gradient(135deg, #50ffd6 0%, #7ffde1 100%);
-}
-
+/* Game interface styles */
 .interface {
+  position: relative;
+  width: 100%;
+  height: 100%;
   pointer-events: none;
-  z-index: 1;
-  position: absolute;
-  margin: 1em;
-  color: var(--primary-white);
-  font-weight: 600;
+  z-index: 10;
 }
 
+/* Ensure interface doesn't cover the center of the screen */
+.interface::before {
+  content: '';
+  position: fixed;
+  top: 20%;
+  left: 20%;
+  right: 20%;
+  bottom: 20%;
+  pointer-events: none;
+  z-index: -1;
+}
+
+/* Logo section - top left */
 #logo-section {
+  position: fixed;
+  top: var(--space-xl);
+  left: var(--space-xl);
+  z-index: 100;
   display: flex;
   flex-direction: column;
-  position: fixed;
-  top: 0;
-  left: 0;
-  z-index: 1;
-  margin: 2rem;
+  align-items: flex-start;
+  gap: var(--space-sm);
 }
 
 .logo {
-  width: min(280px, 22vw);
+  width: clamp(180px, 20vw, 280px);
+  height: auto;
   filter: drop-shadow(var(--shadow-neon));
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: all var(--transition-normal);
+  pointer-events: all;
 }
 
 .logo:hover {
   filter: drop-shadow(var(--shadow-neon-strong));
-  transform: scale(1.05);
+  transform: scale(1.02) translateY(-2px);
+}
+
+.logo-text {
+  font-family: var(--font-primary);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
+  background: var(--gradient-neon);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  filter: drop-shadow(0 0 20px rgba(80, 255, 214, 0.5));
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  pointer-events: all;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.logo-text:hover {
+  filter: drop-shadow(0 0 30px rgba(80, 255, 214, 0.8));
+  transform: scale(1.02) translateY(-2px);
+}
+
+.logo-container {
+  display: flex;
+  align-items: center;
 }
 
 #version {
   color: var(--primary-neon);
-  font-family: 'SF Mono', 'Monaco', 'Inconsolata', 'Roboto Mono', monospace;
+  font-family: var(--font-secondary);
   font-size: 0.75rem;
   font-weight: 500;
-  margin-left: 110px;
   opacity: 0.7;
+  margin-left: var(--space-lg);
   animation: fadeOut 1s ease 10s forwards;
 }
 
@@ -62,238 +90,276 @@
   }
 }
 
-.win-section {
+/* Game UI Layout - Bottom positioned elements */
+.game-ui {
   position: fixed;
-  bottom: 2rem;
-  left: 2rem;
-  height: min(72px, 11vw);
+  bottom: 0;
+  left: 0;
+  right: 0;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-areas: "win bet coins";
+  align-items: end;
+  padding: var(--space-xl);
+  gap: var(--space-lg);
+  z-index: 50;
+}
+
+/* Win section - bottom left */
+.win-section {
+  grid-area: win;
   display: flex;
   align-items: baseline;
+  justify-self: start;
 }
 
 .win-number {
-  font-size: min(72px, 11vw);
+  font-family: var(--font-primary);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
   background: var(--gradient-neon);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  filter: drop-shadow(0 0 10px rgba(80, 255, 214, 0.5));
-  width: 400px;
-  letter-spacing: -0.02em;
-  animation: glow 2s ease-in-out infinite alternate;
-  line-height: 1;
+  filter: drop-shadow(0 0 15px rgba(80, 255, 214, 0.5));
+  animation: winGlow 2s ease-in-out infinite alternate;
+  white-space: nowrap;
 }
 
-@keyframes glow {
-  from { filter: drop-shadow(0 0 10px rgba(80, 255, 214, 0.5)); }
-  to { filter: drop-shadow(0 0 20px rgba(80, 255, 214, 0.8)); }
+@keyframes winGlow {
+  from { 
+    filter: drop-shadow(0 0 15px rgba(80, 255, 214, 0.5));
+    transform: scale(1);
+  }
+  to { 
+    filter: drop-shadow(0 0 25px rgba(80, 255, 214, 0.8));
+    transform: scale(1.02);
+  }
 }
 
+/* Bet section - bottom center */
 .bet-section {
-  position: fixed;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  height: min(72px, 11vw);
-  font-size: min(72px, 11vw);
-  font-weight: 800;
+  grid-area: bet;
   display: flex;
-  flex-direction: row;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: var(--space-md);
+  justify-self: center;
+}
+
+.bet-label {
+  font-family: var(--font-primary);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
   color: var(--primary-white);
   filter: drop-shadow(0 0 10px rgba(255, 255, 255, 0.3));
-}
-
-.bet-label {
   white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: -0.02em;
-  line-height: 1;
-}
-
-.bet-label {
-  white-space: nowrap;
-  pointer-events: none;
-  letter-spacing: -0.02em;
-  line-height: 1;
 }
 
 .bet-amount {
-  width: 120px;
-  white-space: nowrap;
-  text-align: center;
+  font-family: var(--font-primary);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
+  font-weight: 800;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
   background: var(--gradient-neon);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  min-width: 120px;
-  line-height: 1;
+  min-width: 3ch;
+  text-align: center;
+  white-space: nowrap;
 }
 
 #bet-controls {
   display: flex;
   flex-direction: column;
-  gap: 0.15rem;
-  margin-left: 0.5rem;
+  gap: var(--space-xs);
   align-items: center;
   justify-content: center;
-  padding: 4px;
-  min-width: 40px;
-  height: fit-content;
+  transition: opacity var(--transition-normal);
 }
 
-.hidden {
-  visibility: hidden;
+#bet-controls.hidden {
+  opacity: 0;
   pointer-events: none;
 }
 
 .bet-control {
-  margin: 0;
-  font-size: 16px;
-  line-height: 1;
-  cursor: pointer;
-  pointer-events: all;
-  color: var(--primary-neon);
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-  background: rgba(80, 255, 214, 0.1);
-  border-radius: 6px;
-  width: 30px;
-  height: 30px;
+  width: 40px;
+  height: 40px;
   display: flex;
   align-items: center;
   justify-content: center;
+  background: rgba(80, 255, 214, 0.1);
+  border: 1px solid rgba(80, 255, 214, 0.3);
+  border-radius: var(--radius-sm);
+  color: var(--primary-neon);
+  font-size: 18px;
+  font-weight: 600;
+  cursor: pointer;
+  pointer-events: all;
+  transition: all var(--transition-normal);
   backdrop-filter: blur(10px);
-  border: 1px solid rgba(80, 255, 214, 0.2);
-  min-width: 30px;
-  min-height: 30px;
-  flex-shrink: 0;
 }
 
 .bet-control:hover {
   background: rgba(80, 255, 214, 0.2);
+  border-color: var(--primary-neon);
   transform: scale(1.05);
   box-shadow: var(--shadow-neon);
-  border-color: var(--primary-neon);
 }
 
+.bet-control:active {
+  transform: scale(0.95);
+}
+
+/* Coins section - bottom right */
 .coins-section {
-  position: fixed;
-  bottom: 2rem;
-  right: 2rem;
+  grid-area: coins;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 1rem;
-  background: rgba(15, 23, 42, 0.8);
+  gap: var(--space-lg);
+  background: var(--gradient-overlay);
   backdrop-filter: blur(20px);
   border: 1px solid rgba(80, 255, 214, 0.2);
-  border-radius: 20px;
-  padding: 1rem 1.5rem;
+  border-radius: var(--radius-xl);
+  padding: var(--space-lg) var(--space-xl);
   box-shadow: var(--shadow-neon);
+  justify-self: end;
 }
 
 .coins-number {
-  font-size: min(72px, 11vw);
+  font-family: var(--font-primary);
+  font-size: clamp(2.5rem, 8vw, 4.5rem);
   font-weight: 800;
-  width: auto;
-  text-align: right;
+  line-height: 0.9;
+  letter-spacing: -0.02em;
   background: var(--gradient-neon);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
-  letter-spacing: -0.02em;
-  animation: pulse 2s ease-in-out infinite;
+  animation: coinsPulse 2s ease-in-out infinite;
+  white-space: nowrap;
 }
 
-@keyframes pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.8; }
+@keyframes coinsPulse {
+  0%, 100% { 
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.85;
+    transform: scale(1.01);
+  }
 }
 
 .coins-image {
-  width: min(72px, 11vw);
-  height: min(72px, 11vw);
-  filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.6));
-  animation: rotate 10s linear infinite;
+  width: clamp(48px, 8vw, 72px);
+  height: clamp(48px, 8vw, 72px);
+  filter: drop-shadow(0 0 15px rgba(255, 215, 0, 0.6));
+  animation: coinRotate 10s linear infinite;
+  flex-shrink: 0;
 }
 
-@keyframes rotate {
+@keyframes coinRotate {
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
 
-/* Адаптивність */
-@media (max-width: 768px) {
+/* Responsive design */
+@media (max-width: 1024px) {
+  .game-ui {
+    padding: var(--space-lg);
+    gap: var(--space-md);
+  }
+  
   #logo-section {
-    margin: 1rem;
+    top: var(--space-lg);
+    left: var(--space-lg);
+  }
+  
+  .coins-section {
+    padding: var(--space-md) var(--space-lg);
+    gap: var(--space-md);
+  }
+}
+
+@media (max-width: 768px) {
+  .game-ui {
+    grid-template-columns: 1fr;
+    grid-template-areas: 
+      "bet"
+      "win"
+      "coins";
+    justify-items: center;
+    gap: var(--space-lg);
+    padding: var(--space-md);
+  }
+  
+  #logo-section {
+    top: var(--space-md);
+    left: var(--space-md);
   }
   
   .logo {
-    width: min(200px, 30vw);
+    width: clamp(140px, 25vw, 200px);
+  }
+  
+  .logo-text {
+    font-size: clamp(1.5rem, 6vw, 2.5rem);
   }
   
   .win-section,
   .coins-section {
-    margin: 1rem;
-  }
-  
-  .bet-section {
-    margin: auto auto 1rem auto;
-  }
-  
-  .coins-section {
-    padding: 0.75rem 1rem;
-    border-radius: 16px;
+    justify-self: center;
   }
   
   .bet-control {
-    width: 26px;
-    height: 26px;
-    font-size: 14px;
-    border-radius: 4px;
+    width: 36px;
+    height: 36px;
+    font-size: 16px;
   }
   
-  #bet-controls {
-    gap: 0.1rem;
-    margin-left: 0.3rem;
-    padding: 6px;
-    min-width: 32px;
-    min-height: 48px;
+  .coins-section {
+    padding: var(--space-md);
+    border-radius: var(--radius-lg);
   }
 }
 
 @media (max-width: 480px) {
-  .win-number,
-  .bet-section,
-  .coins-number {
-    font-size: min(42px, 11vw);
+  .game-ui {
+    padding: var(--space-sm);
+    gap: var(--space-md);
   }
   
-  .bet-amount {
-    width: 100px;
-    min-width: 100px;
+  #logo-section {
+    top: var(--space-sm);
+    left: var(--space-sm);
   }
   
   .bet-control {
-    width: 22px;
-    height: 22px;
-    font-size: 12px;
-    border-radius: 3px;
+    width: 32px;
+    height: 32px;
+    font-size: 14px;
   }
   
-  #bet-controls {
-    gap: 0.08rem;
-    margin-left: 0.25rem;
-    padding: 4px;
-    min-width: 26px;
-    min-height: 40px;
+  .coins-section {
+    padding: var(--space-sm) var(--space-md);
+    gap: var(--space-sm);
   }
   
-  .coins-image {
-    width: min(48px, 12vw);
-    height: min(48px, 12vw);
+  #version {
+    font-size: 0.65rem;
+    margin-left: var(--space-md);
+  }
+  
+  .logo-text {
+    font-size: clamp(1.2rem, 5vw, 2rem);
   }
 }

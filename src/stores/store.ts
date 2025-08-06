@@ -121,7 +121,7 @@ const useGame = create<State>()(
     /**
      * Coins (blockchain integration)
      */
-    coins: 0, // Початково 0, оновлюється з блокчейну
+    coins: 0, // Initially 0, updated from blockchain
     updateCoins: (amount: number) => {
       set((state) => {
         const newCoins = Math.max(0, state.coins + amount);
@@ -151,10 +151,10 @@ const useGame = create<State>()(
             bet: Math.min(state.bet, Math.max(1, balanceInCoins)),
           }));
           
-          devLog(`Синхронізовано з блокчейном: ${balanceInCoins} монет`);
+          devLog(`Synchronized with blockchain: ${balanceInCoins} coins`);
         }
       } catch (error) {
-        devLog('Помилка синхронізації з блокчейном:', error);
+        devLog('Blockchain synchronization error:', error);
       }
     },
 
@@ -211,7 +211,7 @@ const useGame = create<State>()(
     /**
      * Bet
      */
-    bet: 1, // Мінімальна ставка
+    bet: 1, // Minimum bet
     updateBet: (amount: number) => {
       set((state) => {
         const newBet = state.bet + amount;

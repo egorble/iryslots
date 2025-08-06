@@ -26,7 +26,7 @@ const WalletManager: React.FC = () => {
   const [showDepositModal, setShowDepositModal] = useState(false);
   const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
-  // Обробка депозиту
+  // Handle deposit
   const handleDeposit = async () => {
     if (!depositAmount || parseFloat(depositAmount) <= 0) {
       return;
@@ -57,7 +57,7 @@ const WalletManager: React.FC = () => {
     setWithdrawAmount(walletState.gameBalance);
   };
 
-  // Встановлення мінімального депозиту
+  // Set minimum deposit
   const setMinDeposit = () => {
     setDepositAmount(minDeposit);
   };
@@ -71,15 +71,15 @@ const WalletManager: React.FC = () => {
     return (
       <div className="wallet-manager">
         <div className="wallet-error">
-          <h3>MetaMask не встановлено</h3>
-          <p>Для гри потрібно встановити MetaMask</p>
+          <h3>MetaMask Not Installed</h3>
+          <p>MetaMask is required to play the game</p>
           <a 
             href="https://metamask.io/download/" 
             target="_blank" 
             rel="noopener noreferrer"
             className="install-metamask-btn"
           >
-            Встановити MetaMask
+            Install MetaMask
           </a>
         </div>
       </div>
@@ -100,26 +100,26 @@ const WalletManager: React.FC = () => {
 
         {!walletState.isConnected ? (
           <div className="wallet-connect">
-            <h3>Підключити гаманець</h3>
-            <p>Для гри потрібно підключити MetaMask з IRYS токенами</p>
+            <h3>Connect Wallet</h3>
+            <p>Connect MetaMask with IRYS tokens to play</p>
             <button 
               onClick={connectWallet}
               disabled={walletState.isConnecting}
               className="connect-wallet-btn"
             >
-              {walletState.isConnecting ? 'Підключення...' : 'Підключити MetaMask'}
+              {walletState.isConnecting ? 'Connecting...' : 'Connect MetaMask'}
             </button>
           </div>
         ) : (
           <div className="wallet-connected">
             <div className="wallet-info">
               <div className="wallet-address">
-                <span className="address-label">Адреса:</span>
+                <span className="address-label">Address:</span>
                 <span className="address-value">{shortenAddress(walletState.address!)}</span>
                 <button 
                   onClick={updateBalances}
                   className="refresh-btn"
-                  title="Оновити баланси"
+                  title="Refresh Balances"
                 >
                   🔄
                 </button>
@@ -127,11 +127,11 @@ const WalletManager: React.FC = () => {
               
               <div className="balances">
                 <div className="balance-item">
-                  <span className="balance-label">Гаманець:</span>
+                  <span className="balance-label">Wallet:</span>
                   <span className="balance-value">{formatIRYS(walletState.balance)} IRYS</span>
                 </div>
                 <div className="balance-item">
-                  <span className="balance-label">Ігровий баланс:</span>
+                  <span className="balance-label">Game Balance:</span>
                   <span className="balance-value">{formatIRYS(walletState.gameBalance)} IRYS</span>
                 </div>
               </div>
@@ -144,7 +144,7 @@ const WalletManager: React.FC = () => {
                   className="action-btn deposit-btn"
                   disabled={isLoading}
                 >
-                  💰 Депозит
+                  💰 Deposit
                 </button>
                 
                 <button 
@@ -152,7 +152,7 @@ const WalletManager: React.FC = () => {
                   className="action-btn withdraw-btn"
                   disabled={isLoading || parseFloat(walletState.gameBalance) <= 0}
                 >
-                  💸 Вивід
+                  💸 Withdraw
                 </button>
               </div>
               
@@ -161,14 +161,14 @@ const WalletManager: React.FC = () => {
                   onClick={() => setModal(true)}
                   className="action-btn help-btn"
                 >
-                  ❓ Допомога
+                  ❓ Help
                 </button>
                 
                 <button 
                   onClick={disconnectWallet}
                   className="action-btn disconnect-btn"
                 >
-                  🔌 Відключити
+                  🔌 Disconnect
                 </button>
               </div>
             </div>
@@ -176,12 +176,12 @@ const WalletManager: React.FC = () => {
         )}
       </div>
 
-      {/* Модальне вікно депозиту */}
+      {/* Deposit Modal */}
       {showDepositModal && (
         <div className="modal-overlay" onClick={() => setShowDepositModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Депозит IRYS</h3>
+              <h3>Deposit IRYS</h3>
               <button 
                 onClick={() => setShowDepositModal(false)}
                 className="modal-close"
@@ -191,11 +191,11 @@ const WalletManager: React.FC = () => {
             </div>
             
             <div className="modal-body">
-              <p>Мінімальний депозит: {formatIRYS(minDeposit)} IRYS</p>
-              <p>Баланс гаманця: {formatIRYS(walletState.balance)} IRYS</p>
+              <p>Minimum deposit: {formatIRYS(minDeposit)} IRYS</p>
+              <p>Wallet balance: {formatIRYS(walletState.balance)} IRYS</p>
               
               <div className="input-group">
-                <label>Сума депозиту:</label>
+                <label>Deposit amount:</label>
                 <input
                   type="number"
                   value={depositAmount}
@@ -220,19 +220,19 @@ const WalletManager: React.FC = () => {
                 disabled={isLoading || !depositAmount || parseFloat(depositAmount) < parseFloat(minDeposit)}
                 className="confirm-btn"
               >
-                {isLoading ? 'Обробка...' : 'Підтвердити депозит'}
+                {isLoading ? 'Processing...' : 'Confirm Deposit'}
               </button>
             </div>
           </div>
         </div>
       )}
 
-      {/* Модальне вікно виводу */}
+      {/* Withdraw Modal */}
       {showWithdrawModal && (
         <div className="modal-overlay" onClick={() => setShowWithdrawModal(false)}>
           <div className="modal-content" onClick={(e) => e.stopPropagation()}>
             <div className="modal-header">
-              <h3>Вивід IRYS</h3>
+              <h3>Withdraw IRYS</h3>
               <button 
                 onClick={() => setShowWithdrawModal(false)}
                 className="modal-close"
@@ -242,10 +242,10 @@ const WalletManager: React.FC = () => {
             </div>
             
             <div className="modal-body">
-              <p>Доступно для виводу: {formatIRYS(walletState.gameBalance)} IRYS</p>
+              <p>Available to withdraw: {formatIRYS(walletState.gameBalance)} IRYS</p>
               
               <div className="input-group">
-                <label>Сума виводу:</label>
+                <label>Withdraw amount:</label>
                 <input
                   type="number"
                   value={withdrawAmount}
@@ -271,7 +271,7 @@ const WalletManager: React.FC = () => {
                 disabled={isLoading || !withdrawAmount || parseFloat(withdrawAmount) <= 0 || parseFloat(withdrawAmount) > parseFloat(walletState.gameBalance)}
                 className="confirm-btn"
               >
-                {isLoading ? 'Обробка...' : 'Підтвердити вивід'}
+                {isLoading ? 'Processing...' : 'Confirm Withdraw'}
               </button>
             </div>
           </div>
