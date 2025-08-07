@@ -25,99 +25,100 @@ const HelpModal = () => {
       <div className="modal-box" onClick={(e) => e.stopPropagation()}>
         <div className="modal-main">
           <div className="modal-text">
-            Click on the SPIN button or press SPACE to spin.
+            <strong>🎰 IRYS Slots - Blockchain Slot Machine</strong>
           </div>
           <div className="modal-text">
-            Cherry Charm only considers it a match if the fruits appear
-            consecutively from left to right
+            Connect your MetaMask wallet and deposit IRYS tokens to play.
           </div>
-          <div className="modal-text">Click and drag to rotate the 3D view</div>
+          <div className="modal-text">
+            Click SPIN button or press SPACE to spin. Each spin costs 1 coin (0.01 IRYS).
+          </div>
+          <div className="modal-text">
+            Matches count from left to right. Click and drag to rotate the 3D view.
+          </div>
+          
+          <div className="modal-text">
+            <strong>💰 Payout Table (multiplied by bet):</strong>
+          </div>
           <div id="paytable">
             <div className="modal-text">
               <img className="modal-image" src="./images/cherry.png" />
               <img className="modal-image" src="./images/cherry.png" />
               <img className="modal-image" src="./images/cherry.png" />
-              <span> Pay 50 </span>
-              <img className="modal-image" src="./images/coin.png" />
-            </div>
-            <div className="modal-text">
-              <img className="modal-image" src="./images/apple.png" />
-              <img className="modal-image" src="./images/apple.png" />
-              <img className="modal-image" src="./images/apple.png" />
-              <span> Pay 20 </span>
-              <img className="modal-image" src="./images/coin.png" />
-            </div>
-            <div className="modal-text">
-              <img className="modal-image" src="./images/banana.png" />
-              <img className="modal-image" src="./images/banana.png" />
-              <img className="modal-image" src="./images/banana.png" />
-              <span> Pay 15 </span>
-              <img className="modal-image" src="./images/coin.png" />
-            </div>
-            <div className="modal-text">
-              <img className="modal-image" src="./images/lemon.png" />
-              <img className="modal-image" src="./images/lemon.png" />
-              <img className="modal-image" src="./images/lemon.png" />
-              <span> Pay 5 </span>
+              <span> Pay 21x </span>
               <img className="modal-image" src="./images/coin.png" />
             </div>
             <div className="modal-text">
               <img className="modal-image" src="./images/cherry.png" />
               <img className="modal-image" src="./images/cherry.png" />
-              <span> Pay 40 </span>
+              <span> Pay 16x </span>
               <img className="modal-image" src="./images/coin.png" />
             </div>
             <div className="modal-text">
               <img className="modal-image" src="./images/apple.png" />
               <img className="modal-image" src="./images/apple.png" />
-              <span> Pay 10 </span>
+              <img className="modal-image" src="./images/apple.png" />
+              <span> Pay 8x </span>
+              <img className="modal-image" src="./images/coin.png" />
+            </div>
+            <div className="modal-text">
+              <img className="modal-image" src="./images/apple.png" />
+              <img className="modal-image" src="./images/apple.png" />
+              <span> Pay 4x </span>
               <img className="modal-image" src="./images/coin.png" />
             </div>
             <div className="modal-text">
               <img className="modal-image" src="./images/banana.png" />
               <img className="modal-image" src="./images/banana.png" />
-              <span> Pay 5 </span>
+              <img className="modal-image" src="./images/banana.png" />
+              <span> Pay 6x </span>
+              <img className="modal-image" src="./images/coin.png" />
+            </div>
+            <div className="modal-text">
+              <img className="modal-image" src="./images/banana.png" />
+              <img className="modal-image" src="./images/banana.png" />
+              <span> Pay 2x </span>
+              <img className="modal-image" src="./images/coin.png" />
+            </div>
+            <div className="modal-text">
+              <img className="modal-image" src="./images/lemon.png" />
+              <img className="modal-image" src="./images/lemon.png" />
+              <img className="modal-image" src="./images/lemon.png" />
+              <span> Pay 3x </span>
               <img className="modal-image" src="./images/coin.png" />
             </div>
           </div>
+          
+          <div className="modal-text">
+            <strong>🔗 Blockchain Features:</strong>
+          </div>
+          <div className="modal-text">
+            • All transactions are recorded on IRYS blockchain
+          </div>
+          <div className="modal-text">
+            • Provably fair gaming with smart contracts
+          </div>
+          <div className="modal-text">
+            • Instant deposits and withdrawals
+          </div>
+          <div className="modal-text">
+            • 1 IRYS = 100 coins in-game
+          </div>
 
-          <button onClick={toggleBars}>
+          <button className="bars-toggle-button" onClick={toggleBars}>
             {showBars ? 'Hide' : 'Show'} Bars
           </button>
 
-          <div>
+          <div className="modal-footer">
             <div>
               <a
                 className="modal-link"
-                href="https://michaelkolesidis.com"
+                href="https://iryslots.xyz"
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                © Michael Kolesidis
+                🎰 IRYS Slots
               </a>
-            </div>
-
-            <div id="source">
-              <div>
-                <a
-                  className="modal-source modal-link"
-                  href="https://www.gnu.org/licenses/agpl-3.0.en.html"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Licensed under GNU AGPL 3.0 •
-                </a>
-              </div>
-              <div>
-                <a
-                  className="modal-source modal-link"
-                  href="https://github.com/michaelkolesidis/cherry-charm"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  Source
-                </a>
-              </div>
             </div>
           </div>
         </div>

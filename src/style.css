@@ -85,6 +85,20 @@ body {
   width: 100%;
   height: 100%;
   overflow: hidden;
+  background: transparent; /* Дозволити фону body просвічувати */
+}
+
+/* Статичний фон */
+.static-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('/images/dlyakazika.png') center/cover no-repeat fixed;
+  background-color: #000000; /* Чорний fallback замість сірого градієнта */
+  z-index: 1;
+  pointer-events: none;
 }
 
 /* Canvas styles - ensure proper slot machine display */
@@ -94,8 +108,9 @@ canvas {
   left: 0 !important;
   width: 100% !important;
   height: 100% !important;
-  z-index: 1 !important;
+  z-index: 2 !important;
   pointer-events: auto !important;
+  background: transparent !important;
 }
 
 /* Animated background */

@@ -30,16 +30,11 @@ const Game = () => {
 
   return (
     <>
-      <color args={['#141417']} attach="background" />
+      {/* Прозора 3D сцена */}
       {/* <Perf position="top-right" /> */}
       <OrbitControls enablePan={true} enableZoom={true} enableRotate={true} />
       <Lights />
       {showBars && <Bars />}
-      {/* Тестовий куб для перевірки, що 3D сцена працює */}
-      <mesh position={[0, 0, 0]}>
-        <boxGeometry args={[2, 2, 2]} />
-        <meshStandardMaterial color="red" />
-      </mesh>
       <SlotMachine ref={slotMachineRef} value={[1, 2, 3]} />
     </>
   );

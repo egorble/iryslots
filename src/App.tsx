@@ -24,8 +24,15 @@ const App = () => {
 
   return (
     <>
+      {/* Статичний фон */}
+      <div className="static-background" />
+      
       <Interface />
-      <Canvas camera={{ fov: 75, position: [0, 0, isMobile ? 40 : 30] }}>
+      <Canvas 
+        camera={{ fov: 75, position: [0, 0, isMobile ? 40 : 30] }}
+        gl={{ alpha: true, antialias: true }}
+        style={{ background: 'transparent', position: 'relative', zIndex: 2 }}
+      >
         <Game />
       </Canvas>
     </>

@@ -197,6 +197,64 @@ a:hover {
   }
 }
 
+/* Bars toggle button */
+.bars-toggle-button {
+  background: linear-gradient(135deg, var(--primary-neon) 0%, var(--neon-light) 100%);
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: var(--space-md) var(--space-xl);
+  font-family: var(--font-primary);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--primary-black);
+  cursor: pointer;
+  transition: all var(--transition-normal);
+  box-shadow: 
+    0 4px 15px rgba(80, 255, 214, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin: var(--space-lg) 0;
+  min-width: 120px;
+}
+
+.bars-toggle-button:hover {
+  background: linear-gradient(135deg, var(--neon-light) 0%, var(--primary-neon) 100%);
+  transform: translateY(-2px);
+  box-shadow: 
+    0 6px 20px rgba(80, 255, 214, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.bars-toggle-button:active {
+  transform: translateY(0);
+  box-shadow: 
+    0 2px 10px rgba(80, 255, 214, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Modal footer */
+.modal-footer {
+  margin-top: var(--space-xl);
+  padding-top: var(--space-lg);
+  border-top: 1px solid rgba(80, 255, 214, 0.1);
+  text-align: center;
+}
+
+.modal-footer .modal-link {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--primary-neon);
+  text-decoration: none;
+  transition: all var(--transition-normal);
+}
+
+.modal-footer .modal-link:hover {
+  color: var(--neon-light);
+  text-shadow: 0 0 15px rgba(80, 255, 214, 0.6);
+  transform: scale(1.05);
+}
+
 @media (max-width: 480px) {
   .modal-box {
     padding: var(--space-lg);
@@ -217,5 +275,11 @@ a:hover {
   
   #paytable .modal-text {
     padding: var(--space-sm);
+  }
+  
+  .bars-toggle-button {
+    font-size: 0.9rem;
+    padding: var(--space-sm) var(--space-lg);
+    min-width: 100px;
   }
 }
