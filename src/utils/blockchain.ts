@@ -1,4 +1,5 @@
 import { ethers } from 'ethers';
+// @ts-ignore
 import contractABI from '../../artifacts/SlotMachineBank.abi.json';
 
 // IRYS Network Configuration

@@ -75,7 +75,11 @@ const CACHE_TTL = 10000; // 10 seconds cache
 // Security middleware
 app.use(helmet());
 app.use(cors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173',
+  origin: [
+    process.env.FRONTEND_URL || 'http://localhost:5173',
+    'https://iryslots.xyz',
+    'https://www.iryslots.xyz'
+  ],
   credentials: true
 }));
 
@@ -510,8 +514,8 @@ app.use((req, res) => {
 });
 
 // Start server
-app.listen(PORT, () => {
-  logger.info(`🚀 IRYS Slots server started on port ${PORT}`);
+app.listen(PORT, '0.0.0.0', () => {
+  logger.info(`🚀 IRYS Slots server started on 0.0.0.0:${PORT}`);
   logger.info(`📍 Contract: ${process.env.CONTRACT_ADDRESS}`);
   logger.info(`🔗 Network: ${process.env.IRYS_NETWORK}`);
   

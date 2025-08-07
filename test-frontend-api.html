@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frontend API Test</title>
+</head>
+<body>
+    <h1>Frontend API Connection Test</h1>
+    <div id="results"></div>
+    
+    <script>
+        const API_BASE_URL = 'https://iryslots.xyz';
+        const results = document.getElementById('results');
+        
+        function log(message, isError = false) {
+            const div = document.createElement('div');
+            div.style.color = isError ? 'red' : 'green';
+            div.style.margin = '5px 0';
+            div.textContent = message;
+            results.appendChild(div);
+        }
+        
+        async function testAPI() {
+            log('🔍 Testing Frontend API Connection...');
+            
+            // Test 1: Health check
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`);
+                const data = await response.json();
+                log(`✅ Health check: ${data.status} (${data.server})`);
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`, true);
+            }
+            
+            // Test 2: API Stats
+            try {
+                const response = await fetch(`${API_BASE_URL}/api/stats`);
+                const data = await response.json();
+                log(`✅ API Stats: Network ${data.data.network}, Contract ${data.data.contractAddress.substring(0, 10)}...`);
+            } catch (error) {
+                log(`❌ API Stats failed: ${error.message}`, true);
+            }
+            
+            // Test 3: Balance check (example address)
+            try {
+                const testAddress = '0x0000000000000000000000000000000000000000';
+                const response = await fetch(`${API_BASE_URL}/api/balance/${testAddress}`);
+                const data = await response.json();
+                log(`✅ Balance check: ${data.success ? 'Success' : 'Failed'}`);
+            } catch (error) {
+                log(`❌ Balance check failed: ${error.message}`, true);
+            }
+            
+            // Test 4: CORS check
+            try {
+                const response = await fetch(`${API_BASE_URL}/health`, {
+                    method: 'GET',
+                    headers: {
+                        'Origin': 'https://iryslots.xyz'
+                    }
+                });
+                log(`✅ CORS check: ${response.ok ? 'OK' : 'Failed'}`);
+            } catch (error) {
+                log(`❌ CORS check failed: ${error.message}`, true);
+            }
+        }
+        
+        // Run tests
+        testAPI();
+    </script>
+</body>
+</html>

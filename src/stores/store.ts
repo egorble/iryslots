@@ -160,7 +160,7 @@ const useGame = create<State>()(
           devLog(`Synchronized with blockchain: ${balanceInCoins} coins`);
         }
       } catch (error) {
-        devLog('Blockchain synchronization error:', error);
+        devLog(`Blockchain synchronization error: ${error}`);
       }
     },
 

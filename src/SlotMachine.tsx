@@ -28,9 +28,9 @@ import useGame from './stores/store';
 import devLog from './utils/functions/devLog';
 import segmentToFruit from './utils/functions/segmentToFruit';
 import calculateWin from './utils/functions/calculateWin';
-import { WHEEL_SEGMENT } from './utils/constants';
-import { blockchainService } from './utils/blockchain';
 import { apiClient } from './utils/api';
+import { blockchainService } from './utils/blockchain';
+import { WHEEL_SEGMENT } from './utils/constants';
 import Reel from './Reel';
 import Button from './Button';
 
@@ -80,19 +80,19 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
   // Handle blockchain game results
   const handleBlockchainGameResult = async (winAmount: number, betAmount: number) => {
     setProcessingTransaction(true);
-    
+
     // Show modal after 5 seconds delay
     const modalTimeoutId = setTimeout(() => {
       setShowTransactionModal(true);
     }, 5000);
-    
+
     // Set timeout to prevent infinite processing state
     const processingTimeoutId = setTimeout(() => {
       devLog('Transaction timeout - resetting processing state');
       setProcessingTransaction(false);
       setShowTransactionModal(false);
     }, 30000); // 30 seconds timeout
-    
+
     try {
       const address = await blockchainService.getAddress();
       if (!address) {
@@ -117,14 +117,14 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
 
       // Send to server
       const response = await apiClient.submitGameResult(gameResult);
-      
+
       if (response.success && response.data) {
         devLog('Server response received');
-        
+
         // Update local state with server response
         const newBalanceCoins = response.data.newBalance;
         updateCoins(newBalanceCoins - coins); // Update to match server balance
-        
+
         if (response.data.txHash) {
           devLog(`Transaction hash: ${response.data.txHash}`);
         }
@@ -134,7 +134,7 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
         updateCoins(winAmount - betAmount);
       }
 
-      
+
     } catch (error) {
       devLog(`Error handling blockchain game result: ${error}`);
       // Fallback to local balance update
@@ -155,17 +155,17 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
       const coinsWon = calculateWin(fruit0, fruit1, fruit2) * bet;
       devLog(`Adding ${coinsWon} coins as winnings`);
       setWin(coinsWon);
-      
+
       // Mark result as processed to prevent re-triggering
       resultProcessedRef.current = true;
-      
+
       // Always use blockchain integration
       if (blockchainService.isConnected()) {
         handleBlockchainGameResult(coinsWon, bet); // Send win amount and bet to server
       } else {
         devLog('Blockchain not connected - cannot process game result');
       }
-      
+
       spinInProgressRef.current = false; // Reset spin flag when idle
     }
   }, [phase, fruit0, fruit1, fruit2, bet]);
@@ -181,13 +181,13 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
       devLog('Wallet not connected');
       return;
     }
-    
+
     const address = await blockchainService.getAddress();
     if (!address) {
       devLog('Wallet not connected');
       return;
     }
-    
+
     const betInIRYS = (bet / 100).toFixed(4); // Convert coins to IRYS
     const hasSufficient = await blockchainService.hasSufficientBalance(address, betInIRYS);
     if (!hasSufficient) {
@@ -202,7 +202,7 @@ const SlotMachine = forwardRef(({ value }: SlotMachineProps, ref) => {
     start();
     setStoppedReels(0);
     addSpin();
-    
+
     // Bet deduction is handled by the server in blockchain mode
 
     const min = 10;

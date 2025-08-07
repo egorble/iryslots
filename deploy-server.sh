@@ -43,12 +43,28 @@ fi
 log "Оновлення системи..."
 apt update && apt upgrade -y
 
-log "Встановлення необхідних пакетів..."
-apt install -y nginx certbot python3-certbot-nginx nodejs npm git curl
+log "Вирішення конфліктів Node.js та npm..."
+# Видалення конфліктуючих пакетів
+apt remove -y nodejs npm 2>/dev/null || true
+apt autoremove -y
+
+log "Встановлення необхідних пакетів (без Node.js)..."
+apt install -y nginx certbot python3-certbot-nginx git curl
+
+log "Встановлення Node.js через NodeSource..."
+# Встановлення Node.js 20.x LTS через офіційний репозиторій NodeSource
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt install -y nodejs
 
 # Перевірка версії Node.js
 NODE_VERSION=$(node --version)
+NPM_VERSION=$(npm --version)
 log "Версія Node.js: $NODE_VERSION"
+log "Версія npm: $NPM_VERSION"
+
+# Оновлення npm до останньої версії
+log "Оновлення npm..."
+npm install -g npm@latest
 
 # Створення директорії проекту
 log "Створення директорії проекту..."
@@ -63,15 +79,21 @@ if [ ! -f "package.json" ]; then
     # cp -r /path/to/your/project/* $PROJECT_DIR/
 fi
 
-# Встановлення залежностей
+# Встановлення залежностей та збірка фронтенду
 if [ -f "package.json" ]; then
     log "Встановлення npm залежностей..."
     npm install
     
-    # Збірка проекту (якщо є build скрипт)
-    if npm run | grep -q "build"; then
-        log "Збірка проекту..."
-        npm run build
+    log "Збірка фронтенду для продакшену..."
+    npm run build
+    
+    # Копіювання збудованих файлів в root директорію для nginx
+    if [ -d "dist" ]; then
+        log "Копіювання збудованих файлів..."
+        cp -r dist/* ./
+        log "✅ Фронтенд збудовано та скопійовано"
+    else
+        warning "Директорія dist не знайдена після збірки"
     fi
 fi
 
@@ -92,7 +114,8 @@ server {
 }
 
 server {
-    listen 443 ssl http2;
+    listen 443 ssl;
+    http2 on;
     server_name $DOMAIN www.$DOMAIN;
     
     root $PROJECT_DIR;
@@ -104,7 +127,7 @@ server {
     gzip on;
     gzip_vary on;
     gzip_min_length 1024;
-    gzip_proxied expired no-cache no-store private must-revalidate auth;
+    gzip_proxied expired no-cache no-store private auth;
     gzip_types text/plain text/css text/xml text/javascript application/x-javascript application/xml+rss application/javascript application/json;
     
     # Безпека заголовків
@@ -113,6 +136,16 @@ server {
     add_header X-Content-Type-Options "nosniff" always;
     add_header Referrer-Policy "no-referrer-when-downgrade" always;
     add_header Content-Security-Policy "default-src 'self' http: https: data: blob: 'unsafe-inline'" always;
+    
+    # Health check endpoint
+    location /health {
+        proxy_pass http://127.0.0.1:3001;
+        proxy_http_version 1.1;
+        proxy_set_header Host \$host;
+        proxy_set_header X-Real-IP \$remote_addr;
+        proxy_set_header X-Forwarded-For \$proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto \$scheme;
+    }
     
     # Основна локація для статичних файлів
     location / {
@@ -127,7 +160,7 @@ server {
     
     # API проксі (якщо потрібно)
     location /api/ {
-        proxy_pass http://localhost:3001;
+        proxy_pass http://127.0.0.1:3001;
         proxy_http_version 1.1;
         proxy_set_header Upgrade \$http_upgrade;
         proxy_set_header Connection 'upgrade';
@@ -211,7 +244,8 @@ fi
 
 # Налаштування файрволу
 log "Налаштування файрволу..."
-ufw allow 'Nginx Full'
+ufw allow 80/tcp
+ufw allow 443/tcp
 ufw allow ssh
 ufw --force enable
 

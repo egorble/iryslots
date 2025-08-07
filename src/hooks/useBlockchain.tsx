@@ -209,7 +209,7 @@ export const useBlockchain = () => {
           await connectWallet();
         }
       } catch (err) {
-        devLog('Connection check error:', err);
+        devLog(`Connection check error: ${err}`);
       }
     };
 

@@ -28,7 +28,7 @@ type GLTFResult = GLTF & {
 };
 
 const Button = (props: React.JSX.IntrinsicElements['group']) => {
-  const { phase, isProcessingTransaction } = useGame((state) => state);
+  const { phase } = useGame((state) => state);
 
   const gltf = useGLTF('/models/button.glb') as unknown as GLTFResult;
   const { nodes } = gltf;
